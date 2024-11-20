@@ -57,5 +57,5 @@ def evaluate(model, dataloader, device):
     
     cluster_assignments = np.array(cluster_assignments)
     instance_vectors = np.array(instance_vectors)
-    
+        
     return cluster_assignments, instance_vectors, data_paths

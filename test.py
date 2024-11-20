@@ -35,6 +35,8 @@ def get_args_parser():
     parser.add_argument("--weights-filename", type=str)
     
     # Save
+    parser.add_argument("--tsne", action="store_true") # Save T-SNE Visualization
+    parser.add_argument("--extr", action='store_true') # Extract Original Image Files
     
     return parser
 
@@ -71,7 +73,7 @@ def main(args):
     
     # Load Model
     
-    encoder = load_encoder(args.encoder)
+    encoder = load_encoder(args.encoder, args.dataset)
     model = ContrastiveNetwork(encoder, 
                                feature_dim=args.feature_dim,
                                class_num=args.n_clusters).to(device)
@@ -82,7 +84,7 @@ def main(args):
     
     # Load Dataset
     
-    ds = load_dataset(dataset=args.dataset, mode='test')
+    ds = load_dataset(dataset=args.dataset, mode='test', data_dir="data/crop_0_diff_3/crop_0_diff_3", encoder=args.encoder)
     dl = DataLoader(ds, 
                     shuffle=False, 
                     batch_size=args.batch_size,
@@ -95,15 +97,17 @@ def main(args):
     elapsed_time = int(time.time() - start_time)
     print(f"Evaluate Time: {elapsed_time//60:02d}m {elapsed_time%60:02d}s", end="\n\n")
     
-    start_time = int(time.time())
-    tsne_generator(instance_vectors, cluster_assignments, args.dataset, args.n_clusters)
-    elapsed_time = int(time.time() - start_time)
-    print(f"t-SNE Time: {elapsed_time//60:02d}m {elapsed_time%60:02d}s", end="\n\n")
+    if args.tsne == True:
+        start_time = int(time.time())
+        tsne_generator(instance_vectors, cluster_assignments, args.dataset, args.n_clusters)
+        elapsed_time = int(time.time() - start_time)
+        print(f"t-SNE Time: {elapsed_time//60:02d}m {elapsed_time%60:02d}s", end="\n\n")
     
-    start_time = int(time.time())
-    save_cluster(cluster_assignments, data_paths, args.dataset, args.n_clusters)
-    elapsed_time = int(time.time() - start_time)
-    print(f"Clustering files Time: {elapsed_time//60:02d}m {elapsed_time%60:02d}s", end="\n\n")
+    if args.extr == True:
+        start_time = int(time.time())
+        save_cluster(cluster_assignments, data_paths, args.dataset, args.n_clusters)
+        elapsed_time = int(time.time() - start_time)
+        print(f"Clustering files Time: {elapsed_time//60:02d}m {elapsed_time%60:02d}s", end="\n\n")
     
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Evaluate Contrastive Clustering', parents=[get_args_parser()])

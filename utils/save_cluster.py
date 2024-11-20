@@ -16,12 +16,14 @@ def save_cluster(label, data_path, dataset_name, n_clusters):
     labels_num = ["01st", "02nd", "03rd", "04th", "05th", "06th", "07th", "08th", "09th", "10th"]
     labels_path = []
     
-    for n in labels_num[:n_clusters]:
+    for n in labels_num[:n_clusters]: #:n_clusters
         os.makedirs(f"{save_path}/{n}_cluster", exist_ok=True)
         labels_path.append(f"{save_path}/{n}_cluster")
     
     # label = (n, )
-    if dataset_name != "image":
+    if dataset_name == 'temp':
+        pass
+    elif dataset_name != "image":
         data_path = convert_to_img_path(data_path)
         
     for i, path in zip(label, data_path):

@@ -1,0 +1,11 @@
+# Training Temp Dataset
+python train.py --use-cuda --dataset=temp --n-clusters=2 --batch-size=64 --epochs=100
+
+# 파일 압축해제
+unzip data/3ch_crop_0_output_1_diff.zip -d data/3ch_crop_0_output_1_diff
+
+# Test (Option --tsne, --extr)
+python test.py --use-cuda --dataset=temp --n-clusters=2 --weights-filename=temp_data_02_clusters_100_epochs.pth
+
+# Effective
+python train.py --use-cuda --dataset=temp --n-clusters=2 --batch-size=64 --epochs=100 --encoder=WideResNet

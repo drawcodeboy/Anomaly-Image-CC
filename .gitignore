@@ -26,3 +26,6 @@ saved/losses/*
 
 #result
 result/
+
+#result.zip
+result*.zip

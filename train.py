@@ -23,10 +23,10 @@ def get_args_parser():
     parser.add_argument("--use-cuda", action="store_true")
     
     # Dataset
-    parser.add_argument("--dataset", type=str, default='image') # 'image', 'mask', 'seq'
+    parser.add_argument("--dataset", type=str, default='image') # 'image', 'mask', 'seq', 'temp'
     
     # Model 
-    parser.add_argument("--encoder", type=str, default='ResNet') # Encoder (ResNet, LSTMNet)
+    parser.add_argument("--encoder", type=str, default='ResNet') # Encoder (ResNet, LSTMNet, ViT)
     parser.add_argument("--feature-dim", type=int, default=128)
     parser.add_argument("--n-clusters", type=int, default=10)
     parser.add_argument("--instance-temperature", type=float, default=0.5)
@@ -81,19 +81,20 @@ def main(args):
     
     # Load Model
     
-    encoder = load_encoder(args.encoder)
+    encoder = load_encoder(args.encoder, args.dataset)
     model = ContrastiveNetwork(encoder, 
                                feature_dim=args.feature_dim,
                                class_num=args.n_clusters).to(device)
     
     # Load Dataset
     
-    ds = load_dataset(dataset=args.dataset)
+    ds = load_dataset(dataset=args.dataset, data_dir="data/crop_0_diff_3/crop_0_diff_3", encoder=args.encoder)
     dl = DataLoader(ds, 
                     shuffle=True, 
                     batch_size=args.batch_size,
                     collate_fn=collate_fn_train if args.dataset == 'seq' else None,
                     drop_last=True)
+    
     
     # Optimizer
     optimizer = optim.Adam(model.parameters(), lr=args.lr, weight_decay=args.weight_decay)

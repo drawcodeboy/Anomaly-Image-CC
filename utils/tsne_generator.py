@@ -1,20 +1,14 @@
 from sklearn.manifold import TSNE, LocallyLinearEmbedding, Isomap, MDS, SpectralEmbedding
 from sklearn.metrics import silhouette_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
 import pandas as pd
-import umap
 
 def tsne_generator(data, target, dataset_name, n_clusters):
-    
-    model = TSNE(n_components=2, init='random')
-    # model = SpectralEmbedding(n_components=2)
-    # model = MDS(n_components=2)
-    # model = Isomap(n_components=2)
-    # model = LocallyLinearEmbedding(n_components=2, n_neighbors=10, random_state=42)
-    # model = umap.UMAP(n_neighbors=15, min_dist=0.1, n_components=2, random_state=42)
-    labels = ["01st", "02nd", "03rd", "04th", "05th", "06th", "07th", "08th", "09th", "10th"]
+    model = TSNE(n_components=2, perplexity=30)
     
     ### silhouette coefficient
     s_score = silhouette_score(data, target, sample_size=128)
@@ -22,6 +16,7 @@ def tsne_generator(data, target, dataset_name, n_clusters):
     ### t-SNE ###
     
     # np.seterr(invalid='ignore') # during T-SNE if init is PCA
+    # data = StandardScaler().fit_transform(data)
     embedded = model.fit_transform(data)
     # np.seterr(invalid='warn')
     
@@ -29,6 +24,7 @@ def tsne_generator(data, target, dataset_name, n_clusters):
     
     data=np.concatenate((embedded, target), axis=1)
     
+    labels = ["01st", "02nd", "03rd", "04th", "05th", "06th", "07th", "08th", "09th", "10th"]
     target = [labels[int(cluster)] for cluster in target]
     
     df = pd.DataFrame({
@@ -48,7 +44,8 @@ def tsne_generator(data, target, dataset_name, n_clusters):
     title_str = {
         'seq': 'Sequence',
         'image': 'Image',
-        'mask': 'Mask'
+        'mask': 'Mask',
+        'temp': 'Temp'
     }
     
     scatter.set_title(f"{title_str[dataset_name]}: {n_clusters:02d} clusters t-SNE (Silhouette score: {s_score:.3f})")
