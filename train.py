@@ -92,7 +92,6 @@ def main(args):
     dl = DataLoader(ds, 
                     shuffle=True, 
                     batch_size=args.batch_size,
-                    collate_fn=collate_fn_train if args.dataset == 'seq' else None,
                     drop_last=True)
     
     

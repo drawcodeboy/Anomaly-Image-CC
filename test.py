@@ -87,8 +87,7 @@ def main(args):
     ds = load_dataset(dataset=args.dataset, mode='test', data_dir="data/crop_0_diff_3/crop_0_diff_3", encoder=args.encoder)
     dl = DataLoader(ds, 
                     shuffle=False, 
-                    batch_size=args.batch_size,
-                    collate_fn=collate_fn_test if args.dataset == 'seq' else None)
+                    batch_size=args.batch_size)
     
     # Evaluate
     
